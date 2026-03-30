@@ -38,14 +38,23 @@ class UXAnalyzer:
         problems = []
         visited = set()
         stack = set()
-        reported = set()
+        reported = False   
 
         def dfs(node_id):
-            if node_id in stack:
-                if node_id not in reported:
-                    problems.append("Atrasts potenciāls bezgalīgs cikls")
-                    reported.add(node_id)
+            nonlocal reported
+
+            # ja jau ziņots
+            if reported:
                 return
+
+            if node_id in stack:
+                # parbaude vai nav retry cikls
+                node = next(n for n in self.diagram.nodes if n.id == node_id)
+                if node.type != "error":
+                    problems.append("Atrasts potenciāls bezgalīgs cikls")
+                    reported = True
+                return
+
             stack.add(node_id)
             for e in self.diagram.edges:
                 if e.source == node_id:
@@ -96,9 +105,37 @@ class UXAnalyzer:
     # Mezgls, kurš nekur neved
     def detect_dead_ends(self):
         problems = []
-        outgoing = {e.source for e in self.diagram.edges}
+
         for node in self.diagram.nodes:
-            problems.append(f"Mezgls '{node.label}' ir strupceļš.")
+            outgoing = [e for e in self.diagram.edges if e.source == node.id]
+
+            # START mezglam drīkst nebūt incoming
+            if node.type == "start":
+                continue
+
+            # END mezglam drīkst nebūt outgoing
+            if node.type == "end":
+                continue
+
+            # ERROR mezglam drīkst būt tikai retry
+            if node.type == "error":
+                # ja error mezgls nekur neved → tā ir problēma
+                if not outgoing:
+                    problems.append(f"Kļūdu mezgls '{node.label}' ir strupceļš.")
+                continue
+
+            # ACTION mezgls nav strupceļš, ja tas ved uz END
+            if node.type == "action":
+                if not outgoing:
+                    problems.append(f"Mezgls '{node.label}' ir strupceļš.")
+                continue
+
+            # DECISION mezglam jābūt vismaz 2 izejām
+            if node.type == "decision":
+                if len(outgoing) < 2:
+                    problems.append(f"Izvēles mezglam '{node.label}' nav pietiekamu izeju.")
+                continue
+
         return problems
     
     #4.kritērijs - konsekvence un standarti
@@ -148,6 +185,10 @@ class UXAnalyzer:
     #6.kritērijs - elastība un efektivitāte
     #tikai viens ceļš no sākuma līdz beigām
     def detect_single_path(self):
+        #ja nav nosacijumu, kriteriju nepiemero
+        if not any(e.condition for e in self.diagram.edges):
+            return[]
+
         #ja tikai viens valid ceļš
         valid_edges = [e for e in self.diagram.edges if e.condition == "valid"]
         if len(valid_edges) <= 1:
