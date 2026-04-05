@@ -4,7 +4,7 @@ from parser import load_diagram_from_drawio_xml
 from ai_generator import explain_problems, generate_improved_scenario
 
 def main():
-    path = "diagram.drawio"
+    path = "diagram2.drawio"
 
     diagram =load_diagram_from_drawio_xml(path)
 
@@ -19,13 +19,20 @@ def main():
         print("Atrastās problēmas:")
         for r in results:
             print("-", r)
+
         print("\nAI skaidrojums:")
-        explanation = explain_problems(results)
-        print(explanation)
+        print(explain_problems(results))
+
+        edge_explanations = diagram.explain_edges_readable()
 
         print("\nAI ģenerēts labojums:")
-        improved = generate_improved_scenario(results, diagram.nodes, diagram.edges)
-        print(improved)
+        print(generate_improved_scenario(
+        results, 
+        diagram.nodes, 
+        diagram.edges,
+        edge_explanations=edge_explanations
+        ))
+
     else:
         print("Netika atrastas UX problēmas")
 

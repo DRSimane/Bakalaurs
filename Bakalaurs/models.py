@@ -23,3 +23,35 @@ class Edge:
 class ActivityDiagram:
     nodes: List[Node] #visu mezglu saraksts
     edges: List[Edge] #visi savienojumi
+
+    def explain_edges_readable(self):
+        node_map = {n.id: n.label or "(tukšs)" for n in self.nodes}
+        explanations = []
+        seen = set()
+
+        for e in self.edges:
+            if e.source == e.target: #tiek izlaists self-loop
+                continue
+
+            source_name = node_map.get(e.source, e.source)
+            target_name = node_map.get(e.target, e.target)
+
+            if source_name.strip() == "" and target_name.strip() == "":
+                continue
+
+            key = (source_name, target_name, e.condition)
+            if key in seen:
+                continue
+            seen.add(key)
+
+            if e.condition:
+                explanations.append(
+                    f"Ja nosacījums {e.condition} ir patiess, tad no mezgla '{source_name}' pāreja ved uz mezglu '{target_name}'."
+                )
+            else:
+                explanations.append(
+                    f"No mezgla '{source_name}' pāreja ved uz mezglu '{target_name}'."
+                )
+        return explanations
+    def get_edge_expl(self):
+        return self.explain_edges_readable()

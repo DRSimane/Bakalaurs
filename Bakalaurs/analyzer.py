@@ -8,6 +8,7 @@ class UXAnalyzer:
     #Konstruktors saņem diagrammu
     def __init__(self, diagram: ActivityDiagram):
         self.diagram = diagram # saglaba diagrammu ieksejai lietosanai
+        self.node_map = {n.id: n.label for n in diagram.nodes}
     
     #Pirmais kritērijs - Sistēma stāvokļa redzamība
 
@@ -16,11 +17,12 @@ class UXAnalyzer:
         loops = [] #saraksts atrastajiem cikliem
 
         #iteracija caur visam parejam
-        for edge in self.diagram.edges:
+        for e in self.diagram.edges:
 
             #ja pārejas sakuma un beigu mezgls sakrīt 
-            if edge.source == edge.target:
-                loops.append(f"Self-loop mezgls: {edge.source}") #saglaba ka problemu 
+            if e.source == e.target:
+                label = self.node_map.get(e.source, e.source)
+                loops.append(f"Self-loop mezgls: {label}") #saglaba ka problemu 
 
         return loops #Atgriež atrastos ciklus 
     
@@ -49,10 +51,9 @@ class UXAnalyzer:
 
             if node_id in stack:
                 # parbaude vai nav retry cikls
-                node = next(n for n in self.diagram.nodes if n.id == node_id)
-                if node.type != "error":
-                    problems.append("Atrasts potenciāls bezgalīgs cikls")
-                    reported = True
+                label = self.node_map.get(node_id, node_id)
+                problems.append(f"Atrasts potenciāls bezgalīgs cikls - {label}")
+                reported = True
                 return
 
             stack.add(node_id)
@@ -71,7 +72,8 @@ class UXAnalyzer:
         problems = []
         for edge in self.diagram.edges:
             if edge.condition == "retry":
-                problems.append("Iespējams bezgalīgs retry cikls")
+                label = self.node_map.get(edge.source, edge.source)
+                problems.append(f"Iespējams bezgalīgs retry cikls - '{label}'.")
         return problems
     
     #Otrais kritērijs - Atbilstība mentālajiem modeļiem
@@ -98,7 +100,7 @@ class UXAnalyzer:
         for edge in self.diagram.edges:
             source = next(n for n in self.diagram.nodes if n.id == edge.source)
             if source.type == "end":
-                problems.append("Pēc beigu mezgla nedrīkst būt pārejas.")
+                problems.append(f"Pēc beigu mezgla '{source.label}' nedrīkst būt pārejas.")
         return problems
     
     # 3.kritērijs - Lietotāja kontrole un brīvība
@@ -145,9 +147,9 @@ class UXAnalyzer:
         for node in self.diagram.nodes:
             if node.type == "decision":
                 outgoing = [e for e in self.diagram.edges if e.source == node.id]
-                for e in outgoing:
-                    if not e.condition:
-                        problems.append(f"Izvēles mezglam '{node.label}' nav nosacījuma.")
+                if any(e.condition for e in outgoing):
+                        continue
+                problems.append(f"Izvēles mezglam '{node.label}' nav nosacījuma.")
         return problems
     
     # Nekonsekventi nosacījumi

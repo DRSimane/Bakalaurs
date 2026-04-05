@@ -1,6 +1,5 @@
 import xml.etree.ElementTree as ET
 from models import Node, Edge, ActivityDiagram
-import html
 
 def detect_node_type(value: str, style: str) -> str:
     #automatiska mezgla tipa noteiksana
@@ -20,75 +19,54 @@ def detect_node_type(value: str, style: str) -> str:
         return "error"
 
     #izveles mezgli
-    if "?" in v or "if" in v:
+    if "rhombus" in style or "diamond" in style:
         return "decision"
 
-    #sucess mezgli
-    if "success" in v:
-        return "action"
-
     return "action"
-
 
 def load_diagram_from_drawio_xml(path: str) -> ActivityDiagram:
     tree = ET.parse(path)
     root = tree.getroot()
 
-    mxgraph = root.find(".//mxGraphModel")
-    if mxgraph is None:
-        raise ValueError("Nav atrasts <mxGraphModel> XML failā.")
-
-    mxroot = mxgraph.find("root")
-    if mxroot is None:
-        raise ValueError("Nav atrasts <root> iekš <mxGraphModel>.")
-
     nodes = []
     edges = []
+    edge_labels = {}
 
-    for cell in mxroot.findall("mxCell"):
+    for cell in root.iter("mxCell"):
         cell_id = cell.get("id")
-        value = cell.get("value")
+        value = cell.get("value") or ""
+        style = cell.get("style") or ""
         vertex = cell.get("vertex")
+        edge = cell.get("edge")
+        parent = cell.get("parent")
 
-        if value:
-            value = html.unescape(value).strip()
+        # nosacījumi
+        if parent and parent.startswith("1ok") and "edgeLabel" in style:
+            edge_labels[parent] = value.strip("[]{} ")
+            continue
 
-        #Tikai vertex mezgli
+        # mezgli
         if vertex == "1":
-            value = value or ""
-            style = cell.get("style", "")
             node_type = detect_node_type(value, style)
+
+            # nosaukt izveles mezglu
+            if node_type == "decision" and value.strip() == "":
+                value = "Izvēles mezgls"
+
             nodes.append(Node(cell_id, value, node_type))
 
-	
-    for cell in mxroot.findall("mxCell"):
-        if cell.get("edge") != "1":
-            continue
+        # parejas
+        if edge == "1":
+            source = cell.get("source")
+            target = cell.get("target")
+            edges.append(Edge(source, target, None))
 
-        source = cell.get("source")
-        target = cell.get("target")
-
-        # Ja source/target nav, mēģinām atrast mxPoint
-        if not source or not target:
-            geom = cell.find("mxGeometry")
-            if geom is not None:
-                source = source or geom.get("source")
-                target = target or geom.get("target")
-
-        # Ja joprojām nav - ignorējam malu
-        if not source or not target:
-            continue
-
-        # Mala tiek saglabāta tikai, ja abi mezgli eksistē
-        if not any(n.id == source for n in nodes):
-            continue
-        if not any(n.id == target for n in nodes):
-            continue
-
-        value = cell.get("value")
-        if value:
-            value = html.unescape(value).strip()
-
-        edges.append(Edge(source, target, value))
+    # nosacijumi parejam
+    for e in edges:
+        if e.source in edge_labels:
+            e.condition = edge_labels[e.source]
+        if e.target in edge_labels:
+            e.condition = edge_labels[e.target]
 
     return ActivityDiagram(nodes, edges)
+    
