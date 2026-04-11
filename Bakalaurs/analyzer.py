@@ -94,13 +94,16 @@ class UXAnalyzer:
             return("Diagrammā ir vairāk nekā viens sākuma mezgls.")
         return []
     
-    # Neatbilstoši mezgli(piemēram, pēc beigu mezgla ir pāreja)
+    # Neatbilstoši mezgli(piemēram, pēc beigu mezgla ir pāreja) 
     def detect_invalid_node_sequences(self):
         problems = []
         for edge in self.diagram.edges:
             source = next(n for n in self.diagram.nodes if n.id == edge.source)
+            target = next(n for n in self.diagram.nodes if n.id == edge.target)
             if source.type == "end":
-                problems.append(f"Pēc beigu mezgla '{source.label}' nedrīkst būt pārejas.")
+                problems.append(f"Pēc beigu mezgla nedrīkst būt pārejas.")
+            if target.type == "start":
+                problems.append(f"Sākuma mezglam nedrīkst būt ienākošās pārejas.")
         return problems
     
     # 3.kritērijs - Lietotāja kontrole un brīvība
@@ -147,18 +150,8 @@ class UXAnalyzer:
         for node in self.diagram.nodes:
             if node.type == "decision":
                 outgoing = [e for e in self.diagram.edges if e.source == node.id]
-                if any(e.condition for e in outgoing):
-                        continue
-                problems.append(f"Izvēles mezglam '{node.label}' nav nosacījuma.")
-        return problems
-    
-    # Nekonsekventi nosacījumi
-    def detect_inconsistent_conditions(self):
-        problems = []
-        allowed = ["valid", "invalid", "retry"]
-        for edge in self.diagram.edges:
-            if edge.condition and edge.condition not in allowed:
-                problems.append(f"Nekonsekvents nosacījums: {edge.condition}")
+                if not any(e.condition for e in outgoing):
+                    problems.append("Izvēles mezglam nav nosacījuma.")
         return problems
     
     #5.Kritērijs - Atmiņas slodzes samazināšana
@@ -167,8 +160,20 @@ class UXAnalyzer:
         problems = []
         for node in self.diagram.nodes:
             outgoing = [e for e in self.diagram.edges if e.source == node.id]
-            if len(outgoing) > 3:
-                problems.append(f"Mezglam '{node.label}' ir pārāk daudz izeju ({len(outgoing)}).")
+
+            if node.type == "end" and len(outgoing) > 0:
+                problems.append ("Beigu mezglam nedrīkst būt vairākas izejas")
+                continue
+            if node.type == "start" and len(outgoing) > 1:
+                problems.append ("Sākuma mezglam drīkst būt tikai viena izeja")
+                continue
+            if node.type == "action" and len(outgoing) > 1:
+                problems.append (f"Darbībai '{node.label}' drīkst būt tikai viena izeja.")
+                continue
+            if node.type == "decision": 
+                if len(outgoing) < 2:
+                    problems.append ("Izvēles mezglam jābūt vismaz divām izejām.")
+                continue
         return problems
     
     #pārāk gara plūsma 
@@ -200,11 +205,16 @@ class UXAnalyzer:
     #Nav īsceļu
     def detect_no_shorcut(self):
         #shortcut = pāreja, kas izlaiž mezglus
-        problems = []
+        shortcuts = []
         for edge in self.diagram.edges:
-            if edge.source.startswith("1") and edge.target.startswith("5"):
-                problems.append("Plūsmā nav īsceļu.")
-        return problems
+            try:
+                source_num = int(edge.source)
+                target_num = int(edge.target)
+            except ValueError:
+                continue
+            if target_num - source_num > 1:
+               shortcuts.append((edge.source, edge.target))
+        return []
     
     #7.Kritērijs - minimalistisks dizains
     #Neizmantoti mezgli 
@@ -239,13 +249,37 @@ class UXAnalyzer:
     
     #9.kriterijs - palīdzība
     def detect_help_nodes(self):
-        help_nodes = [n for n in self.diagram.nodes]
+        help_nodes = [n for n in self.diagram.nodes if "help" in n.label.lower()]
         if not help_nodes:
-            return ["Plūsma nav palidzības mezgla."]
+            return ["Plūsmā nav palidzības mezgla."]
         return []
 
 #10 kriterijs - Vizuālā uztveramība
     def detect_visual_clarity(self):
+        problems = []
+        nodes = self.diagram.nodes
+        edges = self.diagram.edges
+
+        node_index = {node.id: i for i, node in enumerate(nodes)}
+
+        #parbauda pareju skaitu attieciba pret mezglie
+        if len(edges) > len(nodes) * 3:
+            problems.append("Diagramma ir pārblīvēta jeb pāreju skaits ir pārāk liels attiecībā pret mezgliem.")
+        
+        #Mezgli ar parak daudz savienojumiem
+        for node in nodes:
+            incoming = [e for e in edges if e.target == node.id]
+            outgoing = [e for e in edges if e.source == node.id]
+
+            total_connections = len(incoming) + len(outgoing)
+
+            if total_connections > 6:
+                problems.append(f"Mezgls '{node.label}:' ir pārslogots, tam ir {total_connections} savienojumi.")
+
+            #pārbaude vai pārejas neiet atpakaļ
+        for edge in edges:
+            if node_index[edge.target] < node_index[edge.source]:
+                problems.append(f"Pāreja no '{self.node_map[edge.source]}' uz '{self.node_map[edge.target]}' iet atpakaļ.")
         return []
     
     #11.Kriterijs noslēgtība 
@@ -275,7 +309,6 @@ class UXAnalyzer:
 
         #4.kriterijs
         report.extend(self.detect_decisions_without_conditions())
-        report.extend(self.detect_inconsistent_conditions())
 
         #5.kriterijs
         report.extend(self.detect_nodes_with_many_exits())

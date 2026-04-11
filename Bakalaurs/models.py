@@ -14,9 +14,11 @@ class Node:
 # savienojums starp mezgliem
 @dataclass
 class Edge: 
-    source: str # mezgls, no kura sākas pāreja
-    target: str #mezgls uz kuru pāriet
-    condition: Optional[str] = None # nosacījums - valid/invalid
+    def __init__(self, id, source, target, condition):
+        self.id = id
+        self.source = source
+        self.target = target
+        self.condition = condition
 
 # aktivitāšu struktūra 
 @dataclass

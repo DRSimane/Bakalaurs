@@ -41,12 +41,12 @@ def load_diagram_from_drawio_xml(path: str) -> ActivityDiagram:
         parent = cell.get("parent")
 
         # nosacījumi
-        if parent and parent.startswith("1ok") and "edgeLabel" in style:
+        if "edgeLabel" in style and parent:
             edge_labels[parent] = value.strip("[]{} ")
             continue
 
         # mezgli
-        if vertex == "1":
+        if vertex == "1" and "edgeLabel" not in style:
             node_type = detect_node_type(value, style)
 
             # nosaukt izveles mezglu
@@ -59,14 +59,12 @@ def load_diagram_from_drawio_xml(path: str) -> ActivityDiagram:
         if edge == "1":
             source = cell.get("source")
             target = cell.get("target")
-            edges.append(Edge(source, target, None))
+            edges.append(Edge(cell_id, source, target, None))
 
     # nosacijumi parejam
     for e in edges:
-        if e.source in edge_labels:
-            e.condition = edge_labels[e.source]
-        if e.target in edge_labels:
-            e.condition = edge_labels[e.target]
+        if e.id in edge_labels:
+            e.condition = edge_labels[e.id]
 
     return ActivityDiagram(nodes, edges)
     

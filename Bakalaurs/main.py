@@ -4,7 +4,7 @@ from parser import load_diagram_from_drawio_xml
 from ai_generator import explain_problems, generate_improved_scenario
 
 def main():
-    path = "diagram2.drawio"
+    path = "invalid.drawio"
 
     diagram =load_diagram_from_drawio_xml(path)
 
