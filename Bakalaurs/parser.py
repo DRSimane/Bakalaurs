@@ -13,6 +13,12 @@ def detect_node_type(value: str, style: str) -> str:
     #end mezgls
     if "endstate" in style:
         return "end"
+    
+    if "perimeter=join" in style:
+        return "join"
+    
+    if "perimeter=fork" in style:
+        return "fork"
 
     # vai mezgla ir value
     if "error" in v:

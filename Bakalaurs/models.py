@@ -57,3 +57,4 @@ class ActivityDiagram:
         return explanations
     def get_edge_expl(self):
         return self.explain_edges_readable()
+    

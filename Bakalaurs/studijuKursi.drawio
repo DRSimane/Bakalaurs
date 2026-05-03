@@ -1,0 +1,94 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
+  <diagram name="Page-1" id="vzjRhZBFinNvCAADRafO">
+    <mxGraphModel dx="2150" dy="1375" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-1" parent="1" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="150" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-2" edge="1" parent="1" source="nDBR3sLUXQ9QhPBzppxJ-1" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="nDBR3sLUXQ9QhPBzppxJ-3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="165" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-3" parent="1" style="html=1;whiteSpace=wrap;" value="Atvērt sākumlapu" vertex="1">
+          <mxGeometry height="50" width="110" x="200" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-4" parent="1" style="html=1;whiteSpace=wrap;" value="Uzklikšķināt uz &quot;Studentiem&quot;" vertex="1">
+          <mxGeometry height="50" width="110" x="373.32" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-5" edge="1" parent="1" source="nDBR3sLUXQ9QhPBzppxJ-3" style="endArrow=open;endFill=1;endSize=12;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="nDBR3sLUXQ9QhPBzppxJ-4" value="">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="310" y="250" as="sourcePoint" />
+            <mxPoint x="260" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-6" edge="1" parent="1" source="nDBR3sLUXQ9QhPBzppxJ-4" style="endArrow=open;endFill=1;endSize=12;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="nDBR3sLUXQ9QhPBzppxJ-23" value="">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="160" y="230" as="sourcePoint" />
+            <mxPoint x="430" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-23" parent="1" style="html=1;whiteSpace=wrap;" value="Uzklikšķināt uz &quot;Studiju kursi&quot;" vertex="1">
+          <mxGeometry height="50" width="110" x="320" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-25" edge="1" parent="1" source="nDBR3sLUXQ9QhPBzppxJ-23" style="endArrow=open;endFill=1;endSize=12;html=1;rounded=0;curved=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="nDBR3sLUXQ9QhPBzppxJ-23" value="">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="210" />
+              <mxPoint x="230" y="250" />
+              <mxPoint x="320" y="270" />
+            </Array>
+            <mxPoint x="265" y="210" as="sourcePoint" />
+            <mxPoint x="420" y="265" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-26" connectable="0" parent="nDBR3sLUXQ9QhPBzppxJ-25" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="[Tukša lapa, ielādēt atkārtoti]" vertex="1">
+          <mxGeometry relative="1" x="-0.1733" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-28" parent="1" style="rhombus;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="563.32" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-29" edge="1" parent="1" source="nDBR3sLUXQ9QhPBzppxJ-28" style="endArrow=open;endFill=1;endSize=12;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="nDBR3sLUXQ9QhPBzppxJ-4" value="">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="420" y="170" as="sourcePoint" />
+            <mxPoint x="420" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-35" connectable="0" parent="nDBR3sLUXQ9QhPBzppxJ-29" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="[Jā]" vertex="1">
+          <mxGeometry relative="1" x="-0.0503" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-30" edge="1" parent="1" source="nDBR3sLUXQ9QhPBzppxJ-23" style="endArrow=open;endFill=1;endSize=12;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="nDBR3sLUXQ9QhPBzppxJ-28" value="">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="567" y="190" as="sourcePoint" />
+            <mxPoint x="510" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-34" connectable="0" parent="nDBR3sLUXQ9QhPBzppxJ-30" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="[Vai lietotājs vēlas&amp;nbsp;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;agriezties]&lt;/span&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.1109" y="-2" as="geometry">
+            <mxPoint x="13" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-32" parent="1" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="650" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-33" edge="1" parent="1" source="nDBR3sLUXQ9QhPBzppxJ-28" style="endArrow=open;endFill=1;endSize=12;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="nDBR3sLUXQ9QhPBzppxJ-32" value="">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="510" y="245" as="sourcePoint" />
+            <mxPoint x="605" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nDBR3sLUXQ9QhPBzppxJ-37" connectable="0" parent="nDBR3sLUXQ9QhPBzppxJ-33" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="[Nē]" vertex="1">
+          <mxGeometry relative="1" x="-0.2902" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

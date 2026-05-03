@@ -76,6 +76,17 @@ class UXAnalyzer:
                 problems.append(f"Iespējams bezgalīgs retry cikls - '{label}'.")
         return problems
     
+    #plūsmas sadalei jābūt vismaz divām izejām
+    def detect_invalid_fork_nodes(self):
+        problems = []
+        for node in self.diagram.nodes:
+            if node.type == "fork":
+                outgoing = [e for e in self.diagram.edges if e.source == node.id]
+                if len(outgoing) < 2:
+                    problems.append(f"Plūsmas sadalei jābūt vismaz divām izejām.")
+        return problems
+
+    
     #Otrais kritērijs - Atbilstība mentālajiem modeļiem
     
     #mezgls bez ienākošām pārejām(neieskaitot start mezglu)
@@ -105,6 +116,16 @@ class UXAnalyzer:
             if target.type == "start":
                 problems.append(f"Sākuma mezglam nedrīkst būt ienākošās pārejas.")
         return problems
+    
+    def detect_invalid_join_nodes(self):
+        problems = []
+        for node in self.diagram.nodes:
+            if node.type == "join":
+                incoming = [e for e in self.diagram.edges if e.target == node.id]
+                if len(incoming) < 2:
+                    problems.append(f"Join mezglam jābūt vismaz divām ienākošām pārejām.")
+        return problems
+
     
     # 3.kritērijs - Lietotāja kontrole un brīvība
     # Mezgls, kurš nekur neved
@@ -143,6 +164,19 @@ class UXAnalyzer:
 
         return problems
     
+    def detect_fork_join_pairing(self):
+        problems = []
+        forks = [n for n in self.diagram.nodes if n.type == "fork"]
+        joins = [n for n in self.diagram.nodes if n.type == "join"]
+
+        if forks and not joins:
+            problems.append("Diagrammā ir plūsmas sadalīšana, bet nav savienošanas.")
+        if joins and not forks:
+            problems.append("Diagrammā ir plūsmas savienošana, bet nav sadalīšana.")
+
+        return problems
+
+    
     #4.kritērijs - konsekvence un standarti
     #Izveles mezgls bez nosacījumiem
     def detect_decisions_without_conditions(self):
@@ -153,6 +187,34 @@ class UXAnalyzer:
                 if not any(e.condition for e in outgoing):
                     problems.append("Izvēles mezglam nav nosacījuma.")
         return problems
+    
+    def detect_parallel_flow_integrity(self):
+        problems = []
+
+        forks = [n for n in self.diagram.nodes if n.type == "fork"]
+
+        for fork in forks:
+            outgoing_edges = [e for e in self.diagram.edges if e.source == fork.id]
+            branch_targets = [e.target for e in outgoing_edges]
+
+            for branch in branch_targets:
+                next_edges = [e for e in self.diagram.edges if e.source == branch]
+
+                leads_to_join = False
+                for e in next_edges:
+                    target_node = next((n for n in self.diagram.nodes if n.id == e.target), None)
+                    if target_node and target_node.type == "join":
+                        leads_to_join = True
+                        break
+
+                if not leads_to_join:
+                    problems.append(
+                    f"Plūsmas sadales izeja nenonāk plūsmas apvienošanā."
+                    )
+
+        return problems
+
+
     
     #5.Kritērijs - Atmiņas slodzes samazināšana
     #Mezgls ar parāk daudz izejām 
@@ -298,17 +360,21 @@ class UXAnalyzer:
         report.extend(self.detect_nodes_without_outgoing())
         report.extend(self.detect_infinite_cycles())
         report.extend(self.detect_retry_cycles())
+        report.extend(self.detect_invalid_fork_nodes())
 
         #2.kriterijs
         report.extend(self.detect_nodes_without_incoming())
         report.extend(self.detect_multiple_start_nodes())
         report.extend(self.detect_invalid_node_sequences())
+        report.extend(self.detect_invalid_join_nodes())
 
         #3.kriterijs
         report.extend(self.detect_dead_ends())
+        report.extend(self.detect_fork_join_pairing())
 
         #4.kriterijs
         report.extend(self.detect_decisions_without_conditions())
+        report.extend(self.detect_parallel_flow_integrity())
 
         #5.kriterijs
         report.extend(self.detect_nodes_with_many_exits())
