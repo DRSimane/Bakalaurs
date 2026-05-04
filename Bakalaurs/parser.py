@@ -21,7 +21,7 @@ def detect_node_type(value: str, style: str) -> str:
         return "fork"
 
     # vai mezgla ir value
-    if "error" in v:
+    if "kļūda" in v:
         return "error"
 
     #izveles mezgli

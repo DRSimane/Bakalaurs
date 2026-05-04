@@ -311,7 +311,7 @@ class UXAnalyzer:
     
     #9.kriterijs - palīdzība
     def detect_help_nodes(self):
-        help_nodes = [n for n in self.diagram.nodes if "help" in n.label.lower()]
+        help_nodes = [n for n in self.diagram.nodes if "palīdzība" in n.label.lower()]
         if not help_nodes:
             return ["Plūsmā nav palidzības mezgla."]
         return []
